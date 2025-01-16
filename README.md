@@ -77,3 +77,5 @@ Telegram: [@skrupenin](http://t.me/skrupenin)
 (с) Крупенин Сергей Владимирович, skrupenin@gmail.com
 
 При использовании материалов исследования обязательно упоминание автора и ссылка на данную страницу.
+
+[Thank you](interview_request.md)
