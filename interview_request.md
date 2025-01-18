@@ -2,9 +2,9 @@
 
 
 В январе 2025г выпущен обзор креативности за 2024 год, возможно Вам будет любопытно ознакомиться:
-* VK Video
-* [PDF](creativity_at_work_review_2024.pdf)
-* YouTube
+* [VK Video](https://vkvideo.ru/video25744112_456239030?list=ln-w72yKAsL7B8GF7EoTf);
+* [PDF](creativity_at_work_review_2024.pdf);
+* [YouTube](https://youtu.be/AMJKvcDwQLY).
 
 
 Если у Вас есть вопросы, сомнения или затруднения, напишите мне на [skrupenin@gmail.com](mailto:skrupenin@gmail.com?subject=Исследование) или в Телеграмм [http://t.me/skrupenin](http://t.me/skrupenin).
