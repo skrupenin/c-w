@@ -2,7 +2,7 @@
 
 
 В январе 2025г выпущен обзор креативности за 2024 год, возможно Вам будет любопытно ознакомиться:
-* [VK Video](https://vkvideo.ru/video25744112_456239030?list=ln-w72yKAsL7B8GF7EoTf);
+* [VK Video](https://vkvideo.ru/video25744112_456239030);
 * [PDF](creativity_at_work_review_2024.pdf);
 * [YouTube](https://youtu.be/AMJKvcDwQLY).
 
