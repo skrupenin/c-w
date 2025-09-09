@@ -69,8 +69,11 @@
 Сергей Владимирович Крупенин
 Telegram: [@skrupenin](http://t.me/skrupenin)
 
-
 [Версия для печати](invitation.pdf)
+
+## Выявленные перспективные темы
+
+
 
 ---
 (с) Крупенин Сергей Владимирович, skrupenin@gmail.com
