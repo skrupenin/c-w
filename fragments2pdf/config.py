@@ -44,6 +44,7 @@ class Config:
     FIELD_ATTRIBUTE1 = 'Атрибут 1'
     FIELD_CONTENT = 'Фрагмент'
     FIELD_COMMENTS = 'Comments'
+    FIELD_LAST_MODIFIED = 'Last modified time'
 
     @classmethod
     def validate(cls):

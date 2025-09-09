@@ -1,50 +1,131 @@
+import os
+import sys
+import argparse
+import json
+from dotenv import load_dotenv
 from airtable_client import AirtableClient
 from pdf_generator import PDFGenerator
-from text_formatter import TextFormatter
-import os
+from markdown_converter import MarkdownConverter
+from datetime import datetime
+from tqdm import tqdm
 
-class ProcessResult:
-    def __init__(self, success, pdf_path=None, record_count=0, error=None):
-        self.success = success
-        self.pdf_path = pdf_path
-        self.record_count = record_count
-        self.error = error
-
-def process_airtable_to_pdf(output_path="output.pdf"):
+def parse_fragment_ids(arg):
     try:
-        print("Connecting to Airtable...")
-        client = AirtableClient()
-        records = client.get_records()
-        print(f"Fetched {len(records)} records.")
+        return set(int(x) for x in arg.split(','))
+    except ValueError:
+        raise argparse.ArgumentTypeError("must be integers separated by commas.")
 
-        print("Initializing PDF generator...")
-        generator = PDFGenerator(output_path)
-        generator.create_pdf()
-        formatter = TextFormatter()
+def parse_modified_since(arg):
+    try:
+        return datetime.fromisoformat(arg)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"must be in ISO format (YYYY-MM-DD): {arg}")
 
-        for idx, record in enumerate(records, 1):
-            print(f"Processing record {idx}/{len(records)}: {record['title']}")
-            # Format content
-            truncated_content = formatter.truncate(record['content'], max_length=2000)
-            formatted_content = formatter.process(truncated_content)
-            generator.create_page(
-                title=record['title'],
-                sequence=record['sequence'],
-                attributes=record['attribute1'] if isinstance(record['attribute1'], list) else [record['attribute1']],
-                content=truncated_content,
-                formatted_content=formatted_content,
-                comment_count=None  # Add comment count if available
-            )
-        generator.save()
-        print(f"PDF generated: {output_path}")
-        return ProcessResult(True, pdf_path=os.path.abspath(output_path), record_count=len(records))
+
+def process_airtable_to_pdf(fragment_ids=None, modified_since=None):
+    """
+    Main function to process Airtable records and generate a PDF.
+    
+    Args:
+        fragment_ids (set, optional): Set of fragment IDs to process. If None, process all fragments.
+        modified_since (datetime, optional): If provided, only process records modified on or after this date.
+    
+    Returns:
+        dict: Processing results including success status and output path
+    """
+    try:
+        # Load environment variables
+        load_dotenv()
+        
+        # Initialize components
+        airtable_client = AirtableClient()
+        pdf_generator = PDFGenerator()
+        markdown_converter = MarkdownConverter()
+        
+        # Fetch records from Airtable
+        records = airtable_client.get_records(modified_since=modified_since, fragment_ids=fragment_ids)
+        if not records:
+            return {
+                "success": False,
+                "error": "No records found in Airtable" + 
+                        (" for the specified date range" if modified_since else "") +
+                        (" for the specified fragment IDs" if fragment_ids else "")
+            }
+
+        # Save records as pretty JSON
+        output_dir = os.path.join(os.getcwd(), "output")
+        os.makedirs(output_dir, exist_ok=True)
+        json_path = os.path.join(output_dir, "records_clean.json")
+        
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(records, f, indent=2, ensure_ascii=False, default=str)
+
+        # Process each record
+        processed_records = []
+        for record in tqdm(records, desc="Converting Markdown to HTML"):
+            # Convert markdown content to HTML
+            record = markdown_converter.convert_record(record)
+            processed_records.append(record)
+        
+        # Save processed records as pretty JSON
+        processed_json_path = os.path.join(output_dir, "records_processed.json")
+        with open(processed_json_path, 'w', encoding='utf-8') as f:
+            json.dump(processed_records, f, indent=2, ensure_ascii=False, default=str)
+
+        # Generate PDF
+        output_path = os.path.join(os.getcwd(), "output/fragments.pdf")
+        pdf_generator.generate_pdf(processed_records, output_path)
+        
+        return {
+            "success": True,
+            "output_path": output_path,
+            "record_count": len(processed_records)
+        }
+        
     except Exception as e:
-        print(f"Error: {e}")
-        return ProcessResult(False, error=str(e))
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
-    result = process_airtable_to_pdf()
-    if result.success:
-        print(f"Success! PDF saved at {result.pdf_path} ({result.record_count} records)")
+    parser = argparse.ArgumentParser(
+        description='Generate PDF from Airtable records',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Process all records
+  python main.py
+
+  # Process records modified after a specific date
+  python main.py --modified-since 2024-03-01
+
+  # Process specific fragments
+  python main.py --fragment-ids 123 456 789
+
+  # Process specific fragments modified after a date
+  python main.py --fragment-ids 123 456 789 --modified-since 2024-03-01
+        """
+    )
+    
+    parser.add_argument(
+        '--fragment-ids',
+        type=parse_fragment_ids,
+        help='List of fragment IDs to process (space-separated numbers)'
+    )
+    
+    parser.add_argument(
+        '--modified-since',
+        type=parse_modified_since,
+        help='Process only records modified on or after this date (YYYY-MM-DD format)'
+    )
+    
+    args = parser.parse_args()
+    
+    result = process_airtable_to_pdf(args.fragment_ids, args.modified_since)
+    
+    if result["success"]:
+        print(f"Successfully generated PDF with {result['record_count']} records")
+        print(f"Output saved to: {result['output_path']}")
     else:
-        print(f"Failed: {result.error}")
+        print(f"Error: {result['error']}")

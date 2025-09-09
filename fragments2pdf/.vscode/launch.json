@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "all records",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "modified-since 2025-06-06",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": ["--modified-since", "2025-06-06"]
+        },
+        {
+            "name": "heavy records",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": ["--fragment-ids", "111,113,116,78"]
+        },
+        {
+            "name": "with comments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": ["--fragment-ids", "136,132", ]
+        },
+        {
+            "name": "several tags",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": ["--fragment-ids", "131,133,147,200"]
+        },
+        {
+            "name": "test_jinja_template",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "test_jinja_template.py",
+            "console": "integratedTerminal",
+            "args": []
+        },
+    ]
+}

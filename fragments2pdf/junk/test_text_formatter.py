@@ -1,5 +1,5 @@
 import unittest
-from text_formatter import TextFormatter
+from junk.text_formatter import TextFormatter
 
 class TestTextFormatter(unittest.TestCase):
     def setUp(self):

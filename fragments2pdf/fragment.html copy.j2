@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 0mm;
+            padding: 0;
+            border: 0;
+        }
+
+        body {
+            font-family: "Calibri Light", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            position: relative;
+            width: 210mm;
+            height: 148mm;
+            padding: 7mm;
+            box-sizing: border-box;
+        }
+
+        .title {
+            position: absolute;
+            top: 7mm;
+            left: 20mm;
+            font-size: 14pt;
+            font-weight: normal;
+            line-height: 1.1;
+        }
+
+        h1 {
+            font-size: 14pt;
+            font-weight: normal;
+            line-height: 1.1;
+            margin-block: 0;
+        }
+
+        .sequence {
+            position: absolute;
+            top: 7mm;
+            left: 7mm;
+            font-size: 14pt;
+            font-weight: normal;
+            line-height: 1.1;
+        }
+
+        .content {
+            position: absolute;
+            top: 15mm;
+            left: 7mm;
+            right: 7mm;
+            bottom: 14mm;
+            overflow: hidden;
+            line-height: 1.1;
+            font-size: 11pt;
+        }
+
+        .attributes {
+            position: absolute;
+            left: 7mm;
+            bottom: 7mm;
+            font-size: 8pt;
+        }
+
+        .last_modified {
+            position: absolute;
+            right: 7mm;
+            bottom: 7mm;
+            font-size: 7pt;
+        }
+
+        .comments {
+            position: absolute;
+            bottom: 10mm;
+            right: 10mm;
+            font-size: 10pt;
+            color: #666;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            .page {
+                margin: 0;
+                padding: 10mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% for record in records %}
+        {% for current_attr in record.attribute1 %}
+            <div class="page">
+                <div class="sequence">{{record.sequence}}{% if record.attribute1|length > 1 %}<span style="font-size: 8pt;">{{loop.index}}</span>{% endif %}</div>
+                <div class="title"><h1>{{record.sequence}}{% if record.attribute1|length > 1 %}<span style="font-size: 8pt;">{{loop.index}}</span>{% endif %}&nbsp;{{ record.title }}</h1></div>
+                <div class="content">{{ record.content_html }}</div>
+                <div class="attributes">
+                    {% if record.attribute1|length == 1 %}
+                        {{ record.attribute1[0] }}
+                    {% else %}
+                        {% for attr in record.attribute1 %}
+                            {% if attr == current_attr %}
+                                <strong>{{ attr }}</strong><br>
+                            {% else %}
+                                {{ attr }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="last_modified">{{ record.last_modified }}</div>
+                {% if record.comments %}
+                <div class="comments">{{ record.comments|length }} comments</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+
+    <script>
+        function fitContentToArea(selector = '.content', minFontPt = 7, maxFontPt = 11) {
+          const contents = document.querySelectorAll(selector);
+        
+          contents.forEach((container, i) => {
+            // debugger;
+            let fontSize = maxFontPt;
+            container.style.fontSize = fontSize + 'pt';
+        
+            const targetHeight = container.offsetHeight;
+            const targetWidth = container.offsetWidth;
+            const lineHeight = getComputedStyle(container).lineHeight;
+            const fontFamily = getComputedStyle(container).fontFamily;
+        
+            // Create a fully new clone, not reused
+            const clone = document.createElement('div');
+            clone.innerHTML = container.innerHTML;
+        
+            // Apply clone styles
+            Object.assign(clone.style, {
+              position: 'absolute',
+              left: '-9999px', // offscreen but visible
+              top: '0',
+              visibility: 'hidden',
+              width: targetWidth + 'px',
+              height: 'auto',
+              overflow: 'visible',
+              whiteSpace: 'normal',
+              padding: '0',
+              margin: '0',
+              lineHeight: lineHeight,
+              fontFamily: fontFamily,
+            });
+        
+            document.body.appendChild(clone);
+        
+            // Shrink loop
+            while (container.scrollHeight > targetHeight && fontSize > minFontPt) {
+              fontSize -= 0.05;
+              container.style.fontSize = fontSize + 'pt';
+              // 🧠 Force layout recalculation
+              void container.offsetHeight;
+            }
+        
+            // Apply final font size
+            container.style.fontSize = fontSize.toFixed(2) + 'pt';
+    
+            // ✅ Add bottom border if content still overflows
+            if (container.scrollHeight > targetHeight) {
+                container.style.borderBottom = '1px dashed gray';
+            }        
+            // Clean up
+            document.body.removeChild(clone);
+          });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          fitContentToArea();
+        });
+    </script>
+
+</body>
+</html> 
