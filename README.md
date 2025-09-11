@@ -6,9 +6,9 @@
 * Финансовые организации.
 
 
-В январе 2025г выпущен обзор креативности за 2024 год ([VK Video](https://vkvideo.ru/video25744112_456239030), [PDF](creativity_at_work_review_2024.pdf), [YouTube](https://youtu.be/AMJKvcDwQLY)).
+В январе 2025г выпущен обзор креативности за 2024 год ([PDF](creativity_at_work_review_2024.pdf), [VK Video](https://vkvideo.ru/video25744112_456239030), [YouTube](https://youtu.be/AMJKvcDwQLY)).
 
-В августе 2025 на конференции по [ФСА](http://vavefsa.com/) представлен обзор креативности за 2025 год ([PDF](creativity_at_work_review_2025.pdf), видео готовится к публикации).
+В августе 2025 на конференции по [ФСА](http://vavefsa.com/) представлен обзор креативности за 2025 год ([PDF](creativity_at_work_review_2025.pdf), [YouTube] (https://youtu.be/2ZyhxcOYZ9E)).
 
 Предполагаемые разделы отчета по исследованию:
 
